@@ -2,18 +2,9 @@ const express = require('express');
 const {check, validationResult} = require('express-validator');
 const router = express.Router();
 
-
-
-
 router.get('/', (req, res)=>{
     res.render('login', {title:'Login Page'});
 });
-
-//fake database
-const credential = {
-    email:'kodego@test.com',
-    password:'123456789'
-}
 
 router.post('/login',
 
@@ -37,10 +28,10 @@ router.post('/login',
 
     if(!errors.isEmpty()){
         console.log(errors);
-        //
+        // res.send({ errors: errors.array() });
         res.render('login', {title:'Login Page', errors:'Please check your input!'});
     }else{
-        if(req.body.email == credential.email && req.body.password == credential.password){
+        if(isCredentialCorrect(email, password)){
             // create a session
             req.session.user = req.body.email;
             res.redirect('/dashboard');
@@ -49,6 +40,20 @@ router.post('/login',
         }
     }
 });
+
+function isCredentialCorrect(email, password){
+    //fake database
+       const credential = {
+       email:'kodego@test.com',
+       password: '123456789'
+       }
+
+       if(email == credential.email && password == credential.password){
+           return true;
+       }else{
+           return false;
+       }
+   }
 
 router.get('/dashboard', (req, res)=>{
     if(req.session.user){
